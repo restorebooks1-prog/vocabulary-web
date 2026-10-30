@@ -1,0 +1,21 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // 替換成 Firebase Authentication 中你的 UID；保持預設值會拒絕所有請求。
+    function isOwner(uid) {
+      return request.auth != null
+        && request.auth.uid == 'REPLACE_WITH_OWNER_UID'
+        && request.auth.uid == uid;
+    }
+    match /users/{uid}/lists/{listId} {
+      allow read: if isOwner(uid);
+      allow create, update: if isOwner(uid)
+        && listId.matches('[a-z0-9][a-z0-9_-]{0,79}')
+        && request.resource.data.keys().hasOnly(['schemaVersion', 'words', 'filters'])
+        && request.resource.data.schemaVersion == 1
+        && request.resource.data.words is map
+        && (request.resource.data.filters == null || request.resource.data.filters is map);
+      allow delete: if false;
+    }
+  }
+}

@@ -1,0 +1,92 @@
+{
+  "schemaVersion": 2,
+  "id": "demo-01",
+  "collectionName": "示範作品",
+  "itemName": "01集",
+  "summary": "介面示範資料，並非正式字幕整理。",
+  "filters": {
+    "categories": [
+      "日常與行程",
+      "心情與回應"
+    ],
+    "periods": [
+      "1～3分鐘",
+      "4～6分鐘",
+      "時間未知"
+    ]
+  },
+  "words": [
+    {
+      "id": "iku-go",
+      "category": "日常與行程",
+      "term": "行く",
+      "reading": "いく",
+      "meaning": "去",
+      "hint": "行った（いった）：去了",
+      "firstStartSeconds": 12.5,
+      "period": "1～3分鐘"
+    },
+    {
+      "id": "kaeru-return",
+      "category": "日常與行程",
+      "term": "帰る",
+      "reading": "かえる",
+      "meaning": "回去、回家",
+      "hint": "帰ろう（かえろう）：回去吧",
+      "firstStartSeconds": 180,
+      "period": "4～6分鐘"
+    },
+    {
+      "id": "daijoubu-okay",
+      "category": "心情與回應",
+      "term": "大丈夫",
+      "reading": "だいじょうぶ",
+      "meaning": "沒問題、不要緊",
+      "hint": "依語境確認語氣",
+      "firstStartSeconds": null,
+      "period": "時間未知"
+    }
+  ],
+  "columns": [
+    {
+      "key": "seen",
+      "label": "已看過",
+      "type": "checkbox"
+    },
+    {
+      "key": "marked",
+      "label": "標記",
+      "type": "checkbox"
+    },
+    {
+      "key": "category",
+      "label": "分類",
+      "type": "text"
+    },
+    {
+      "key": "term",
+      "label": "單字／固定說法",
+      "type": "text"
+    },
+    {
+      "key": "reading",
+      "label": "假名讀音",
+      "type": "text"
+    },
+    {
+      "key": "meaning",
+      "label": "本段意思",
+      "type": "text"
+    },
+    {
+      "key": "hint",
+      "label": "字幕形式／提示",
+      "type": "text"
+    },
+    {
+      "key": "period",
+      "label": "首次出現時段",
+      "type": "text"
+    }
+  ]
+}

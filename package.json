@@ -1,0 +1,13 @@
+{
+  "name": "vocabulary-web",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "node --test",
+    "start": "node scripts/serve.mjs",
+    "validate": "node scripts/validate.mjs"
+  },
+  "private": true,
+  "type": "module"
+}
