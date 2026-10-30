@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import {mergeStates,normalizeFilters,visibleWords,timePeriod,validateDataset,validateCatalog,clearWordField,cleanState} from '../core.js';
+import {mergeStates,normalizeFilters,visibleWords,cardWords,timePeriod,validateDataset,validateCatalog,clearWordField,cleanState} from '../core.js';
 const columns = [{"key":"seen","label":"已看過","type":"checkbox"},{"key":"marked","label":"標記","type":"checkbox"},{"key":"category","label":"分類","type":"text"},{"key":"term","label":"單字／固定說法","type":"text"},{"key":"reading","label":"假名讀音","type":"text"},{"key":"meaning","label":"本段意思","type":"text"},{"key":"hint","label":"字幕形式／提示","type":"text"},{"key":"period","label":"首次出現時段","type":"text"}];
 const data = {schemaVersion:2,columns,id:'test',collectionName:'分類',itemName:'子項目',summary:'',filters:{categories:['A','B'],periods:['1～3分鐘']},words:[{id:'w1',category:'A',term:'行く',reading:'いく',meaning:'去',hint:'',period:'1～3分鐘',firstStartSeconds:0},{id:'w2',category:'B',term:'帰る',reading:'かえる',meaning:'回家',hint:'',period:'1～3分鐘',firstStartSeconds:0}]};
 test('跨裝置合併保留不同詞與欄位，取消勾選不被舊值蓋回',()=>{
@@ -18,6 +18,23 @@ test('搜尋分類時段與勾選條件以 AND 篩選，零選取為零項',()=>
   assert.equal(visibleWords(data,filters,state).length,1);
   filters.unseenOnly=true; assert.equal(visibleWords(data,filters,state).length,0);
   filters.unseenOnly=false; filters.categories=[]; assert.equal(visibleWords(data,filters,state).length,0);
+});
+test('卡片只取目前篩選中的未看過單字，每輪固定清單並在重開時重新篩選',()=>{
+  const state = cleanState(null), filters = normalizeFilters(data,{});
+  const round = cardWords(data,filters,state);
+  assert.deepEqual(round.map(word=>word.id),['w1','w2']);
+  state.words.w1 = {seen:{value:true,at:1},marked:{value:true,at:1}};
+  assert.deepEqual(round.map(word=>word.id),['w1','w2']);
+  assert.deepEqual(cardWords(data,filters,state).map(word=>word.id),['w2']);
+  assert.equal(filters.unseenOnly,false);
+  filters.markedOnly = true;
+  assert.deepEqual(cardWords(data,filters,state),[]);
+  state.words.w2 = {marked:{value:true,at:2}};
+  assert.deepEqual(cardWords(data,filters,state).map(word=>word.id),['w2']);
+  filters.search = '行く';
+  assert.deepEqual(cardWords(data,filters,state),[]);
+  filters.search = ''; filters.categories = ['A'];
+  assert.deepEqual(cardWords(data,filters,state),[]);
 });
 test('三分鐘邊界',()=>assert.deepEqual([0,179.999,180,359.999,360,null].map(timePeriod),['1～3分鐘','1～3分鐘','4～6分鐘','4～6分鐘','7～9分鐘','時間未知']));
 test('拒絕重複 ID 與外部資料路徑',()=>{

@@ -1,7 +1,8 @@
 import {config} from './config.js';
-import {validateCatalog, validateDataset, cleanState, mergeStates, normalizeFilters, visibleWords, clearWordField} from './core.js';
+import {validateCatalog, validateDataset, cleanState, mergeStates, normalizeFilters, visibleWords, cardWords, clearWordField} from './core.js';
 const $ = id => document.getElementById(id);
 const entries = new Map();
+let cardSession = null;
 let catalog, current, cloud, user, selectionVersion = 0, resetTargets = [], cloudReady = false;
 const warn = message => { $('warning').textContent = message; };
 const status = message => { $('status').textContent = message; };
@@ -102,7 +103,102 @@ function render() {
   $('progress-title').textContent = `Progress ·（${(words.length ? seen / words.length * 100 : 0).toFixed(1)}%）`;
   $('progress-value').textContent = `已看過 ${seen} / ${words.length}${words.length ? '' : ' · 無符合條件項目'}`;
   $('progress').max = words.length || 1; $('progress').value = seen;
+  $('card-mode').disabled = false;
+  if (cardSession) renderCard();
 }
+function renderCard() {
+  const {entry, words, index} = cardSession;
+  const word = words[index], content = $('card-content'), actions = $('card-actions');
+  content.replaceChildren();
+  actions.replaceChildren();
+  $('card-progress').textContent = word ? `${index + 1} / ${words.length}`
+    : words.length ? `已完成本輪 ${words.length} 張卡片。` : '目前篩選結果沒有尚未勾選 seen 的單字。';
+  if (!word) {
+    const button = document.createElement('button');
+    button.className = 'card-check';
+    button.textContent = '離開 Card Mode';
+    button.setAttribute('aria-keyshortcuts', 'z x');
+    button.title = '快捷鍵：Z 或 X';
+    button.addEventListener('click', leaveCardPage);
+    actions.append(button);
+    return;
+  }
+  for (const column of entry.data.columns) {
+    if (column.key === 'period' || column.key === 'category') continue;
+    if (column.type === 'text') {
+      const heading = document.createElement('span'), value = document.createElement('div');
+      heading.className = 'card-label'; heading.textContent = column.label;
+      value.textContent = word[column.key];
+      if (column.key === 'term') value.className = 'card-term';
+      const field = document.createElement('div'); field.className = 'card-field';
+      field.dataset.key = column.key;
+      if (column.key !== 'term') field.append(heading);
+      field.append(value); content.append(field);
+      continue;
+    }
+    const button = document.createElement('button');
+    button.className = 'card-check'; button.dataset.key = column.key;
+    button.textContent = column.label;
+    button.setAttribute('aria-pressed', String(!!entry.state.words[word.id]?.[column.key]?.value));
+    button.addEventListener('click', () => {
+      const value = !entry.state.words[word.id]?.[column.key]?.value;
+      (entry.state.words[word.id] ??= {})[column.key] = {value, at:timestamp(entry)};
+      cardSession.index++;
+      changed(entry); render(); focusCard();
+    });
+    actions.append(button);
+  }
+  [...actions.children].forEach((button, index) => {
+    const shortcut = ['z', 'x'][index];
+    button.setAttribute('aria-keyshortcuts', shortcut);
+    button.title = `快捷鍵：${shortcut.toUpperCase()}`;
+  });
+}
+document.addEventListener('keydown', event => {
+  if (!cardSession || event.repeat || event.ctrlKey || event.altKey || event.metaKey) return;
+  if (event.target instanceof Element && event.target.closest('input, textarea, select, [contenteditable]:not([contenteditable="false"])')) return;
+  const shortcut = {KeyZ:'z', KeyX:'x'}[event.code] || event.key.toLowerCase();
+  const index = ['z', 'x'].indexOf(shortcut);
+  if (index < 0) return;
+  const completed = cardSession.index >= cardSession.words.length;
+  const button = $('card-actions').querySelectorAll('button')[completed ? 0 : index];
+  if (!button || button.disabled) return;
+  event.preventDefault();
+  button.click();
+});
+function focusCard() {
+  $('card-title').focus({preventScroll:true});
+}
+$('card-mode').onclick = () => {
+  if (!current) return;
+  history.pushState({cardMode:true}, '', location.href);
+  showCardPage();
+};
+function showCardPage() {
+  if (!current) return;
+  cardSession = {entry:current, words:cardWords(current.data, current.filters, current.state), index:0, listScroll:window.scrollY};
+  $('library-page').hidden = true;
+  $('card-page').hidden = false;
+  renderCard(); focusCard(); window.scrollTo(0, 0);
+}
+function showLibraryPage() {
+  const listScroll = cardSession?.listScroll || 0;
+  cardSession = null;
+  $('card-page').hidden = true;
+  $('library-page').hidden = false;
+  $('card-mode').focus({preventScroll:true});
+  window.scrollTo(0, listScroll);
+}
+function leaveCardPage() {
+  if (!cardSession) return;
+  showLibraryPage();
+  if (history.state?.cardMode) history.back();
+}
+$('close-cards').onclick = leaveCardPage;
+window.addEventListener('popstate', () => {
+  if (history.state?.cardMode) showCardPage();
+  else if (cardSession) showLibraryPage();
+});
 function renderColumns() {
   const fragment = document.createDocumentFragment();
   for (const column of current.data.columns) {

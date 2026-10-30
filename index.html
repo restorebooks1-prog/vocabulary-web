@@ -10,6 +10,7 @@
 </head>
 <body>
 <main>
+    <section id="library-page" aria-label="單字列表">
     <header>
         <div class="brand">
             <nav aria-label="選擇詞表">
@@ -20,6 +21,7 @@
             </nav>
         </div>
         <div class="account">
+            <button id="card-mode" disabled>Card Mode</button>
             <button id="login">登入 Google</button>
             <button id="logout" hidden>登出</button>
             <button id="sync">同步進度</button>
@@ -59,6 +61,16 @@
             <tbody id="words"></tbody>
         </table>
     </div>
+    </section>
+    <section id="card-page" aria-labelledby="card-title" hidden>
+        <div class="card-heading">
+            <h2 id="card-title" tabindex="-1">Card Mode</h2>
+            <p id="card-progress" role="status"></p>
+            <button id="close-cards" aria-label="離開 Card Mode" title="離開 Card Mode">×</button>
+        </div>
+        <div id="card-content"></div>
+        <div id="card-actions" class="actions"></div>
+    </section>
     <footer>
         <hr>
         <p id="status" role="status">本機模式：尚未設定 Firebase。</p>

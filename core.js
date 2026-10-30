@@ -97,6 +97,9 @@ export function visibleWords(data, filters, state) {
     && (!filters.markedOnly || state.words[word.id]?.marked?.value)
     && (!query || searchColumns.some(column => word[column.key].toLocaleLowerCase().includes(query))));
 }
+export function cardWords(data, filters, state) {
+  return visibleWords(data, {...filters, unseenOnly:true}, state);
+}
 export function clearWordField(state, ids, field, at) {
   assert(field === 'seen' || field === 'marked', '未知的勾選欄位');
   for (const id of ids) (state.words[id] ??= {})[field] = {value:false, at};
