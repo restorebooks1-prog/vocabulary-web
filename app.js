@@ -125,7 +125,7 @@ async function selectItem(item, collection) {
     if (version !== selectionVersion) return;
     current = entries.get(item.id); restoreFilters(); renderColumns(); render();
     $('title').textContent = `${collection.name} · ${item.name}`; $('summary').textContent = `${current.data.summary} 共 ${current.data.words.length} 項。`;
-    $('breadcrumb').textContent = `${collection.name} / ${item.name}`; $('library').open = false;
+    $('library').open = false;
     history.replaceState(null, '', `#${item.id}`); status('已載入本機進度');
     await synchronize(current);
   } catch (error) { warn(error.message); }

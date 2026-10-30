@@ -1,17 +1,79 @@
 <!doctype html>
-<html lang="zh-Hant"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>我的單字庫</title><link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Cpath fill='%23fff8e7' stroke='%2325665b' stroke-width='4' d='M32 15Q19 5 5 12v39q14-7 27 3 13-10 27-3V12Q45 5 32 15Z'/%3E%3Cpath stroke='%2325665b' stroke-width='3' d='M32 15v39'/%3E%3C/svg%3E"><link rel="stylesheet" href="style.css"></head>
-<body><main>
-<header><div><p class="eyebrow">MY VOCABULARY NOTEBOOK</p><h1>我的單字庫</h1></div><div class="account"><button id="login">登入 Google</button><button id="logout" hidden>登出</button><button id="sync">同步進度</button></div></header>
-<nav aria-label="選擇詞表"><details id="library"><summary>選擇分類與詞表 ▾</summary><div id="catalog" class="catalog"></div></details><span id="breadcrumb"></span></nav>
-<h2 id="title">載入詞表中…</h2><p id="summary"></p>
-<section class="tools" aria-label="詞表篩選"><button id="reset">重設</button><input id="search" type="search" placeholder="搜尋目前詞表" aria-label="搜尋目前詞表的文字欄位"><label><input id="unseen" type="checkbox">只看未看過</label><label><input id="marked" type="checkbox">只看標記</label><details id="category-filter"><summary></summary><fieldset><legend>只看哪些分類</legend></fieldset></details><details id="period-filter"><summary></summary><fieldset><legend>只看哪些首次出現時段</legend></fieldset></details></section>
-<section class="progress-card"><div class="progress-heading"><label id="progress-title" for="progress">Progress ·（0.0%）</label><span id="progress-value" aria-live="polite"></span></div><progress id="progress" max="1" value="0" aria-describedby="progress-value"></progress></section>
-<div class="tablewrap"><table><thead><tr id="columns"></tr></thead><tbody id="words"></tbody></table></div>
-<footer>
-<hr>
-<p id="status" role="status">本機模式：尚未設定 Firebase。</p>
-<p id="warning" role="alert"></p>
-<p>勾選與篩選會保存在目前瀏覽器；設定雲端後，開啟詞表時讀取、操作後保存。另一台已開著的頁面可按「同步進度」。</p>
-</footer>
-<dialog id="reset-dialog" aria-labelledby="reset-title"><h2 id="reset-title">重設目前篩選結果</h2><p id="reset-description"></p><div class="actions"><button id="clear-seen">清除已看過</button><button id="clear-marked">清除標記</button><button id="cancel-reset" autofocus>取消</button></div></dialog>
-</main><script type="module" src="app.js"></script></body></html>
+<html lang="zh-Hant">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>我的單字庫</title>
+    <link rel="icon"
+          href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Cpath fill='%23fff8e7' stroke='%2325665b' stroke-width='4' d='M32 15Q19 5 5 12v39q14-7 27 3 13-10 27-3V12Q45 5 32 15Z'/%3E%3Cpath stroke='%2325665b' stroke-width='3' d='M32 15v39'/%3E%3C/svg%3E">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+<main>
+    <header>
+        <div class="brand">
+            <nav aria-label="選擇詞表">
+                <details id="library">
+                    <summary>選擇分類與詞表 ▾</summary>
+                    <div id="catalog" class="catalog"></div>
+                </details>
+            </nav>
+        </div>
+        <div class="account">
+            <button id="login">登入 Google</button>
+            <button id="logout" hidden>登出</button>
+            <button id="sync">同步進度</button>
+        </div>
+    </header>
+    <div class="dataset-heading">
+      <h2 id="title">載入詞表中…</h2>
+      <p id="summary"></p>
+    </div>
+    <section class="tools" aria-label="詞表篩選">
+        <button id="reset">重設</button>
+        <input id="search" type="search" placeholder="搜尋目前詞表" aria-label="搜尋目前詞表的文字欄位"><label><input
+            id="unseen" type="checkbox">只看未看過</label><label><input id="marked" type="checkbox">只看標記</label>
+        <details id="category-filter">
+            <summary></summary>
+            <fieldset>
+                <legend>只看哪些分類</legend>
+            </fieldset>
+        </details>
+        <details id="period-filter">
+            <summary></summary>
+            <fieldset>
+                <legend>只看哪些首次出現時段</legend>
+            </fieldset>
+        </details>
+    </section>
+    <section class="progress-card">
+        <div class="progress-heading"><label id="progress-title" for="progress">Progress ·（0.0%）</label><span
+                id="progress-value" aria-live="polite"></span></div>
+        <progress id="progress" max="1" value="0" aria-describedby="progress-value"></progress>
+    </section>
+    <div class="tablewrap">
+        <table>
+            <thead>
+            <tr id="columns"></tr>
+            </thead>
+            <tbody id="words"></tbody>
+        </table>
+    </div>
+    <footer>
+        <hr>
+        <p id="status" role="status">本機模式：尚未設定 Firebase。</p>
+        <p id="warning" role="alert"></p>
+        <p>勾選與篩選會保存在目前瀏覽器；設定雲端後，開啟詞表時讀取、操作後保存。另一台已開著的頁面可按「同步進度」。</p>
+    </footer>
+    <dialog id="reset-dialog" aria-labelledby="reset-title"><h2 id="reset-title">重設目前篩選結果</h2>
+        <p id="reset-description"></p>
+        <div class="actions">
+            <button id="clear-seen">清除已看過</button>
+            <button id="clear-marked">清除標記</button>
+            <button id="cancel-reset" autofocus>取消</button>
+        </div>
+    </dialog>
+</main>
+<script type="module" src="app.js"></script>
+</body>
+</html>
