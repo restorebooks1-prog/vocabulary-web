@@ -37,4 +37,4 @@ History contains only `init`; no commit convention exists. Use concise imperativ
 
 ## Security & Data Boundaries
 
-Publish vocabulary through Git; do not add website upload/import/export controls. Personal checkbox and filter states belong in localStorage and Firebase, never committed datasets. Enforce the owner UID in Firestore rules; frontend checks alone do not authorize database access. Never commit service-account keys or tokens. Keep status and persistence explanations below the table, in the footer under its divider.
+Built-in vocabulary is published through Git; website JSON imports publish public vocabulary to Firebase and must be restricted to the configured Google owner UID by Firestore rules. Vocabulary export is public and excludes personal progress. Personal checkbox and filter states belong in localStorage and Firebase, never published datasets. Frontend checks alone do not authorize database access. Never commit service-account keys or tokens. Keep data management controls, status and persistence explanations below the table, in the footer under its divider.

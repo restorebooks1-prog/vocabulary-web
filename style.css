@@ -96,6 +96,8 @@ button.card-check[data-key=marked][aria-pressed=true] { background: #fff0e1; bor
   #card-page .actions button { flex: 1; padding-inline: 8px; font-size: 14px; }
 }
 .tools>details{min-width:0;max-width:100%}
+#import-preview,#import-result{overflow-wrap:anywhere}
+#import-dialog{max-height:calc(100dvh - 28px);overflow:auto}
 .tools>details>summary{display:flex;align-items:center;justify-content:space-between;gap:12px}
 .tools>details>summary::after{content:"";width:8px;height:8px;border-right:2px solid currentColor;border-bottom:2px solid currentColor;transform:translateY(-2px) rotate(45deg);flex-shrink:0}
 .tools>details[open]>summary{background:#eef4ef;border-color:#34766b}

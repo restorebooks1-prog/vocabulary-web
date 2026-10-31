@@ -4,11 +4,11 @@ export function validateCatalog(catalog) {
   assert(catalog?.schemaVersion === 1 && Array.isArray(catalog.collections), '目錄格式錯誤');
   const collectionIds = new Set(), itemIds = new Set();
   for (const collection of catalog.collections) {
-    assert(idPattern.test(collection.id) && !collectionIds.has(collection.id), '分類 ID 無效或重複');
+    assert(typeof collection.id === 'string' && idPattern.test(collection.id) && !collectionIds.has(collection.id), '分類 ID 無效或重複');
     collectionIds.add(collection.id);
     assert(typeof collection.name === 'string' && collection.name.trim() && Array.isArray(collection.items), '分類名稱／項目無效');
     for (const item of collection.items) {
-      assert(idPattern.test(item.id) && !itemIds.has(item.id), '詞表 ID 無效或重複'); itemIds.add(item.id);
+      assert(typeof item.id === 'string' && idPattern.test(item.id) && !itemIds.has(item.id), '詞表 ID 無效或重複'); itemIds.add(item.id);
       assert(typeof item.name === 'string' && item.name.trim(), '子項目名稱無效');
       assert(/^data\/[a-z0-9_-]+\.json$/.test(item.file), '詞表必須位於 data/，不可使用外部網址或相對跳脫路徑');
     }
@@ -16,7 +16,7 @@ export function validateCatalog(catalog) {
   return catalog;
 }
 export function validateDataset(data) {
-  assert(data?.schemaVersion === 2 && idPattern.test(data.id), '詞表版本／ID 無效（需要 schemaVersion 2）');
+  assert(data?.schemaVersion === 2 && typeof data.id === 'string' && idPattern.test(data.id), '詞表版本／ID 無效（需要 schemaVersion 2）');
   for (const key of ['collectionName', 'itemName', 'summary']) assert(typeof data[key] === 'string', `${key} 必須是字串`);
   assert(data.collectionName.trim() && data.itemName.trim(), '分類與子項目不可空白');
   assert(Array.isArray(data.columns) && data.columns.length > 0, '缺少 columns 欄位定義');
@@ -36,12 +36,15 @@ export function validateDataset(data) {
   }
   assert(Array.isArray(data.words), '缺少單字資料'); const ids = new Set();
   for (const word of data.words) {
-    assert(idPattern.test(word.id) && !ids.has(word.id), '單字 ID 無效或重複'); ids.add(word.id);
+    assert(typeof word.id === 'string' && idPattern.test(word.id) && !ids.has(word.id), '單字 ID 無效或重複'); ids.add(word.id);
     assert(typeof word.term === 'string' && word.term.trim(), '單字需要 term 作為識別用的顯示文字');
     for (const column of data.columns) if (column.type === 'text') {
       assert(Object.hasOwn(word,column.key) && typeof word[column.key] === 'string', `單字 ${word.id} 缺少文字欄位 ${column.key}`);
     }
     assert(!Object.hasOwn(word,'seen') && !Object.hasOwn(word,'marked'), '公開詞表不能包含私人勾選進度');
+    for (const key of ['category', 'period']) {
+      assert(!Object.hasOwn(word, key) || typeof word[key] === 'string', `${key} 必須是字串或省略`);
+    }
     assert((!data.filters.categories.length || data.filters.categories.includes(word.category))
       && (!data.filters.periods.length || data.filters.periods.includes(word.period)), '篩選對應無效');
     assert(word.firstStartSeconds === undefined || word.firstStartSeconds === null || (Number.isFinite(word.firstStartSeconds) && word.firstStartSeconds >= 0), '首次時間無效');
@@ -75,16 +78,30 @@ export function cleanState(raw) {
   if (validateRecord(raw.filters) && raw.filters.value && typeof raw.filters.value === 'object') state.filters = raw.filters;
   return state;
 }
-// 每個欄位獨立合併，避免手機的標記覆蓋電腦的已看過狀態；同時修改同一欄以時間較新者為準。
+function filterConflictKey(value) {
+  return JSON.stringify(value, (key, field) => {
+    if (field && typeof field === 'object' && !Array.isArray(field)) {
+      return Object.fromEntries(Object.keys(field).sort().map(name => [name, field[name]]));
+    }
+    return field;
+  });
+}
+// 每個欄位獨立合併，以較新時間為準。同時間衝突固定取勾選值或排序後較大的篩選 JSON，讓各裝置收斂。
 export function mergeStates(left, right) {
   const result = cleanState(left), incoming = cleanState(right);
   for (const [id, fields] of Object.entries(incoming.words)) {
     for (const [key, record] of Object.entries(fields)) {
       const current = result.words[id]?.[key];
-      if (!current || record.at > current.at) (result.words[id] ??= {})[key] = record;
+      if (!current || record.at > current.at || (record.at === current.at && record.value && !current.value)) {
+        (result.words[id] ??= {})[key] = record;
+      }
     }
   }
-  if (incoming.filters && (!result.filters || incoming.filters.at > result.filters.at)) result.filters = incoming.filters;
+  if (incoming.filters && (!result.filters || incoming.filters.at > result.filters.at
+    || (incoming.filters.at === result.filters.at
+      && filterConflictKey(incoming.filters.value) > filterConflictKey(result.filters.value)))) {
+    result.filters = incoming.filters;
+  }
   return result;
 }
 export function visibleWords(data, filters, state) {

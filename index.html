@@ -32,16 +32,16 @@
       <p id="summary"></p>
     </div>
     <section class="tools" aria-label="詞表篩選">
-        <button id="reset">重設</button>
-        <input id="search" type="search" placeholder="搜尋目前詞表" aria-label="搜尋目前詞表的文字欄位"><label><input
-            id="unseen" type="checkbox">只看未看過</label><label><input id="marked" type="checkbox">只看標記</label>
-        <details id="category-filter">
+        <button id="reset" disabled>重設</button>
+        <input id="search" type="search" disabled placeholder="搜尋目前詞表" aria-label="搜尋目前詞表的文字欄位"><label><input
+            id="unseen" type="checkbox" disabled>只看未看過</label><label><input id="marked" type="checkbox" disabled>只看標記</label>
+        <details id="category-filter" hidden>
             <summary></summary>
             <fieldset>
                 <legend>只看哪些分類</legend>
             </fieldset>
         </details>
-        <details id="period-filter">
+        <details id="period-filter" hidden>
             <summary></summary>
             <fieldset>
                 <legend>只看哪些首次出現時段</legend>
@@ -73,9 +73,17 @@
     </section>
     <footer>
         <hr>
+        <div class="actions" aria-label="詞表資料管理">
+            <button id="export-dataset" disabled>匯出目前詞表 JSON</button>
+            <button id="import-dataset" disabled>匯入詞表 JSON</button>
+            <button id="delete-dataset" disabled>刪除目前雲端詞表</button>
+            <input id="import-files" type="file" accept=".json,application/json" multiple hidden>
+        </div>
+        <p>匯出包含目前詞表的全部單字；匯入限指定 Google 帳號，可選取多份詞表 JSON。同 ID 更新內容，勾選與篩選進度另行保存。雲端詞表限指定帳號登入後讀取，重新整理可讀取更新。</p>
         <p id="status" role="status">本機模式：尚未設定 Firebase。</p>
+        <p>刪除限指定 Google 帳號，會一併清除目前詞表、其雲端進度及此瀏覽器的進度與篩選設定</p>
         <p id="warning" role="alert"></p>
-        <p>勾選與篩選會保存在目前瀏覽器；設定雲端後，開啟詞表時讀取、操作後保存。另一台已開著的頁面可按「同步進度」。</p>
+        <p>勾選與篩選會保存在目前瀏覽器；設定雲端後，開啟詞表時讀取、操作後保存。另一台已開著的頁面可按「同步進度」。登出會立即清除畫面中的雲端詞表；尚未同步的進度留在本機，待下次登入同步。</p>
     </footer>
     <dialog id="reset-dialog" aria-labelledby="reset-title"><h2 id="reset-title">重設目前篩選結果</h2>
         <p id="reset-description"></p>
@@ -83,6 +91,25 @@
             <button id="clear-seen">清除已看過</button>
             <button id="clear-marked">清除標記</button>
             <button id="cancel-reset" autofocus>取消</button>
+        </div>
+    </dialog>
+    <dialog id="delete-dialog" aria-labelledby="delete-title" aria-describedby="delete-description">
+        <h2 id="delete-title">確認刪除雲端詞表</h2>
+        <p id="delete-description"></p>
+        <p id="delete-result" role="status"></p>
+        <div class="actions">
+            <button id="confirm-delete">確認刪除</button>
+            <button id="cancel-delete" autofocus>取消</button>
+        </div>
+    </dialog>
+    <dialog id="import-dialog" aria-labelledby="import-title" aria-describedby="import-description">
+        <h2 id="import-title">確認匯入詞表</h2>
+        <p id="import-description">以下詞表會儲存到僅限指定帳號存取的雲端。相同 ID 的內容會被整份取代；未列出的詞表保留。</p>
+        <ul id="import-preview"></ul>
+        <p id="import-result" role="status"></p>
+        <div class="actions">
+            <button id="confirm-import">確認匯入</button>
+            <button id="cancel-import" autofocus>取消</button>
         </div>
     </dialog>
 </main>

@@ -13,7 +13,7 @@ test('同步失敗後重試成功會移除舊錯誤，保留其他保存警告',
   const entry = {data:{id:'test'}, state:{schemaVersion:1, words:{}}, dirty:true};
   let failure = new Error('Cloud Firestore API is disabled');
   const context = {
-    $:id => elements[id], current:entry, cloudReady:true, structuredClone, mergeStates,
+    $:id => elements[id], current:entry, cloudReady:true, accountVersion:0, structuredClone, mergeStates,
     persist() {}, restoreFilters() {}, render() {},
     cloud:{async push(id, state) { if (failure) throw failure; return state; }}
   };
