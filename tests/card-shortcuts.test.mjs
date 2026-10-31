@@ -30,6 +30,14 @@ test('進行中 Z 和 X 分別觸發第一與第二個按鈕', () => {
   assert.deepEqual(pressKey({code:'KeyX'}, false).clicks, [0, 1]);
 });
 
+test('空白鍵與 Z 觸發相同操作並阻止預設捲動', () => {
+  for (const completed of [false, true]) {
+    for (const overrides of [{code:'Space', key:' '}, {code:'', key:' '}, {code:'Space', key:'Process', isComposing:true}]) {
+      assert.deepEqual(pressKey(overrides, completed), {clicks:[1, 0], prevented:true});
+    }
+  }
+});
+
 test('長按與組合鍵不觸發卡片操作', () => {
   for (const overrides of [{repeat:true}, {ctrlKey:true}, {altKey:true}, {metaKey:true}]) {
     assert.deepEqual(pressKey(overrides), {clicks:[0, 0], prevented:false});

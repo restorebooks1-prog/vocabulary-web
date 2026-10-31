@@ -217,8 +217,8 @@ function renderCard() {
     const button = document.createElement('button');
     button.className = 'card-check';
     button.textContent = '離開 Card Mode';
-    button.setAttribute('aria-keyshortcuts', 'z x');
-    button.title = '快捷鍵：Z 或 X';
+    button.setAttribute('aria-keyshortcuts', 'z x Space');
+    button.title = '快捷鍵：Z、X 或空白鍵';
     button.addEventListener('click', leaveCardPage);
     actions.append(button);
     return;
@@ -250,14 +250,14 @@ function renderCard() {
   }
   [...actions.children].forEach((button, index) => {
     const shortcut = ['z', 'x'][index];
-    button.setAttribute('aria-keyshortcuts', shortcut);
-    button.title = `快捷鍵：${shortcut.toUpperCase()}`;
+    button.setAttribute('aria-keyshortcuts', index === 0 ? 'z Space' : shortcut);
+    button.title = `快捷鍵：${index === 0 ? 'Z / 空白鍵' : shortcut.toUpperCase()}`;
   });
 }
 document.addEventListener('keydown', event => {
   if (!cardSession || event.repeat || event.ctrlKey || event.altKey || event.metaKey) return;
   if (event.target instanceof Element && event.target.closest('input, textarea, select, [contenteditable]:not([contenteditable="false"])')) return;
-  const shortcut = {KeyZ:'z', KeyX:'x'}[event.code] || event.key.toLowerCase();
+  const shortcut = {KeyZ:'z', KeyX:'x', Space:'z'}[event.code] || (event.key === ' ' ? 'z' : event.key.toLowerCase());
   const index = ['z', 'x'].indexOf(shortcut);
   if (index < 0) return;
   const completed = cardSession.index >= cardSession.words.length;
