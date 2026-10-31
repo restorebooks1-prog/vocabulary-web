@@ -4,7 +4,12 @@ const $ = id => document.getElementById(id);
 const entries = new Map();
 let cardSession = null;
 let catalog, current, cloud, user, selectionVersion = 0, resetTargets = [], cloudReady = false;
-const warn = message => { $('warning').textContent = message; };
+const warnings = new Map();
+const warn = (message, source = 'general') => {
+  if (message) warnings.set(source, message);
+  else warnings.delete(source);
+  $('warning').textContent = [...warnings.values()].join('\n');
+};
 const status = message => { $('status').textContent = message; };
 function storageKey(id) { return `vocab-library:v1:${config.ownerUid || 'local'}:${id}`; }
 function persist(entry) {
@@ -30,9 +35,9 @@ async function synchronize(entry) {
     entry.state = mergeStates(entry.state, remote);
     entry.dirty = changedDuringRequest;
     persist(entry);
-    if (current === entry) { restoreFilters(); render(); status(entry.dirty ? '有新修改，等待上傳…' : '已與雲端同步'); }
+    if (current === entry) { restoreFilters(); render(); warn('', 'sync'); status(entry.dirty ? '有新修改，等待上傳…' : '已與雲端同步'); }
   } catch (error) {
-    if (current === entry) { status('雲端同步失敗，本機進度已保留；可按「同步進度」重試。'); warn(error.message); }
+    if (current === entry) { status('雲端同步失敗，本機進度已保留；可按「同步進度」重試。'); warn(error.message, 'sync'); }
   } finally { entry.syncing = false; }
   // 修改發生在請求期間才接著保存；失敗時不無限重試。
   if (entry.dirty && cloudReady && entry.retryAfterChange) { entry.retryAfterChange = false; synchronize(entry); }
@@ -274,6 +279,7 @@ async function initialize() {
     // 回呼在 connectCloud 回傳後執行，確保 cloud 已設定。
     setTimeout(() => {
       user = account; cloudReady = !!user && user.uid === config.ownerUid;
+      warn('', 'sync');
       $('login').hidden = !!user; $('logout').hidden = !user; $('sync').disabled = !cloudReady;
       if (user && !cloudReady) warn(`此帳號未獲授權。帳號 UID：${user.uid}。請在設定及資料庫規則填入你的 UID。`);
       else warn('');
