@@ -1,10 +1,10 @@
 rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
-    // 替換成 Firebase Authentication 中你的 UID；保持預設值會拒絕所有請求。
+    // 僅允許指定的 Firebase Authentication 帳號存取個人進度。
     function isOwner(uid) {
       return request.auth != null
-        && request.auth.uid == 'REPLACE_WITH_OWNER_UID'
+        && request.auth.uid == 'n7V3jMDDigTr9qdu2VKzRX2NjPz2'
         && request.auth.uid == uid;
     }
     match /users/{uid}/lists/{listId} {
