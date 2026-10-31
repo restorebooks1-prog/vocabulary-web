@@ -1,16 +1,4 @@
 {
   "schemaVersion": 1,
-  "collections": [
-    {
-      "id": "asobi-asobase",
-      "name": "あそびあそばせ",
-      "items": [
-        {
-          "id": "asobi-asobase-04",
-          "name": "04集",
-          "file": "data/asobi-asobase-04.json"
-        }
-      ]
-    }
-  ]
+  "collections": []
 }
