@@ -95,3 +95,15 @@ button.card-check[data-key=marked][aria-pressed=true] { background: #fff0e1; bor
   #card-page > .actions { padding: 14px 20px; gap: 8px; }
   #card-page .actions button { flex: 1; padding-inline: 8px; font-size: 14px; }
 }
+.tools>details{min-width:0;max-width:100%}
+.tools>details>summary{display:flex;align-items:center;justify-content:space-between;gap:12px}
+.tools>details>summary::after{content:"";width:8px;height:8px;border-right:2px solid currentColor;border-bottom:2px solid currentColor;transform:translateY(-2px) rotate(45deg);flex-shrink:0}
+.tools>details[open]>summary{background:#eef4ef;border-color:#34766b}
+.tools>details[open]>summary::after{transform:translateY(2px) rotate(225deg)}
+.tools fieldset{top:calc(100% + 8px);width:100%;min-width:250px;max-height:min(360px,60vh);padding:8px}
+.tools fieldset legend{position:absolute;width:1px;height:1px;padding:0;overflow:hidden;clip-path:inset(50%);white-space:nowrap}
+.tools fieldset label{display:flex;align-items:center;gap:10px;min-height:42px;padding:7px 10px;border-radius:5px;overflow-wrap:anywhere}
+.tools fieldset label:hover,.tools fieldset label:focus-within{background:#eef4ef}
+.tools fieldset label:first-of-type{border-bottom:1px solid #dce5df;border-radius:0;margin-bottom:4px;padding-bottom:11px}
+.tools fieldset input[type=checkbox]{flex-shrink:0;margin:0}
+@media(max-width:650px){.tools>details{width:100%}.tools fieldset{min-width:0}}
