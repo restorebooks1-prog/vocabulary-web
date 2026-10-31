@@ -1,7 +1,16 @@
 {
   "schemaVersion": 1,
   "collections": [
-    {"id":"demo-series","name":"示範作品","items":[{"id":"demo-01","name":"01集","file":"data/demo-01.json"},{"id":"demo-02","name":"02集","file":"data/demo-02.json"}]},
-    {"id":"demo-topics","name":"主題練習","items":[{"id":"demo-travel","name":"旅行會話","file":"data/demo-travel.json"}]}
+    {
+      "id": "asobi-asobase",
+      "name": "あそびあそばせ",
+      "items": [
+        {
+          "id": "asobi-asobase-04",
+          "name": "04集",
+          "file": "data/asobi-asobase-04.json"
+        }
+      ]
+    }
   ]
 }
