@@ -276,6 +276,7 @@ async function initialize() {
       user = account; cloudReady = !!user && user.uid === config.ownerUid;
       $('login').hidden = !!user; $('logout').hidden = !user; $('sync').disabled = !cloudReady;
       if (user && !cloudReady) warn(`此帳號未獲授權。帳號 UID：${user.uid}。請在設定及資料庫規則填入你的 UID。`);
+      else warn('');
       status(cloudReady ? '已登入，正在載入雲端進度…' : '本機模式；請登入已授權帳號。');
       if (cloudReady) synchronize(current);
     },0);
