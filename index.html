@@ -21,7 +21,10 @@
             </nav>
         </div>
         <div class="account">
-            <button id="card-mode" disabled>Card Mode</button>
+            <div class="card-mode-status">
+                <button id="card-mode" disabled>Card Mode</button>
+                <p id="status" role="status">本機模式：尚未設定 Firebase。</p>
+            </div>
             <button id="login">登入 Google</button>
             <button id="logout" hidden>登出</button>
             <button id="sync">同步進度</button>
@@ -80,7 +83,6 @@
             <input id="import-files" type="file" accept=".json,application/json" multiple hidden>
         </div>
         <p>匯出包含目前詞表的全部單字；匯入限指定 Google 帳號，可選取多份詞表 JSON。同 ID 更新內容，勾選與篩選進度另行保存。雲端詞表限指定帳號登入後讀取，重新整理可讀取更新。</p>
-        <p id="status" role="status">本機模式：尚未設定 Firebase。</p>
         <p>刪除限指定 Google 帳號，會一併清除目前詞表、其雲端進度及此瀏覽器的進度與篩選設定</p>
         <p id="warning" role="alert"></p>
         <p>勾選與篩選會保存在目前瀏覽器；設定雲端後，開啟詞表時讀取、操作後保存。另一台已開著的頁面可按「同步進度」。登出會立即清除畫面中的雲端詞表；尚未同步的進度留在本機，待下次登入同步。</p>

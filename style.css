@@ -6,6 +6,25 @@
   gap: 8px 18px;
   margin-top: 18px;
 }
+.account {
+  align-items: center;
+}
+.card-mode-status {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  max-width: 100%;
+}
+#card-mode {
+  flex-shrink: 0;
+}
+#status {
+  min-width: 0;
+  max-width: 24rem;
+  margin: 0;
+  font-size: 14px;
+  overflow-wrap: anywhere;
+}
 .dataset-heading h2,
 .dataset-heading p {
   margin: 0;
